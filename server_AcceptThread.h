@@ -12,19 +12,25 @@
 
 #include "common_Socket.h"
 #include <vector>
+#include "server_ReducerThread.h"
+#include "server_ThreadSafeHashMap.h"
 
 class AcceptThread : public Thread {
 public:
-	AcceptThread(Socket *acceptSocket);
+	AcceptThread(Socket *acceptSocket, ThreadSafeHashMap *aThreadSafeMap);
 	AcceptThread();
 	virtual ~AcceptThread();
 	void run();
 	void endAccepting();
 
 private:
+	void joinReducers();
+
 	Socket *socket;
+	ThreadSafeHashMap *threadSafeMap;
 	bool endAcceptingClients;
 	std::vector<Socket *> *clients;
+	std::vector<ReducerThread *> *reducers;
 
 };
 

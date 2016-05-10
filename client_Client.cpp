@@ -30,6 +30,10 @@ void Client::begin() {
 	std::string input;
 
 	while (std::getline(std::cin, input)) {
+		if (input.compare("") == 0) {
+			std::cout<"debo salir de aca"<<std::endl;
+		}
+
 		std::cout<<input<<std::endl;
 
 		Map *map = new Map();
@@ -38,9 +42,7 @@ void Client::begin() {
 		MapSerializer serializer(map);
 
 		std::string sendString(serializer.serialize());
-
 		socket->send((char *)sendString.c_str(), sendString.length());
-
 		std::cout<<sendString<<std::endl;
 
 		delete map;

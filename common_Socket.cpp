@@ -57,7 +57,6 @@ Socket::~Socket() {
 }
 
 int Socket::bind() {
-	// WEIRD bug here, if used the socket fd it fails
 	int anotherfd = socket(this->result->ai_family, this->result->ai_socktype,
 			this->result->ai_protocol);
 	this->fd = anotherfd;

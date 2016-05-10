@@ -10,6 +10,7 @@
 
 #include <string>
 #include "common_Socket.h"
+#include "server_ThreadSafeHashMap.h"
 
 class Server {
 public:
@@ -19,6 +20,7 @@ public:
 	void begin();
 
 private:
+	ThreadSafeHashMap *threadSafeMap;
 	Socket *socket;
 	void beginAccepting();
 };

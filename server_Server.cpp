@@ -14,61 +14,39 @@
 #include "server_AcceptThread.h"
 
 #define DEFAULT_IP "127.0.0.1"
-#define MAX_BUFFER_SIZE 64
-#define STOP_RECEIVING_CONDITION "End\n"
 #define STOP_LISTENING_KEY "q"
 
 Server::Server(const std::string& port) {
-	this->socket = new Socket(DEFAULT_IP, port.c_str());
+	socket = new Socket(DEFAULT_IP, port.c_str());
+	threadSafeMap = new ThreadSafeHashMap();
 }
 
 Server::Server() {
 }
 
 Server::~Server() {
-}
-
-void receiveFromClient(std::string& incomingData, Socket socket) {
-	bool keepReceiving = true;
-	// Done workaround of size + 1 to avoid valgrind error
-	char buffer[MAX_BUFFER_SIZE + 1];
-	buffer[MAX_BUFFER_SIZE] = 0;
-	while (keepReceiving) {
-		memset(&buffer[0], 0, sizeof(buffer));
-		if (socket.receive(&buffer[0], MAX_BUFFER_SIZE) == -1) {
-			keepReceiving = false;
-		} else {
-			incomingData += buffer;
-
-			std::cout<<incomingData<<std::endl;
-			// If we find an "End\n" client was done sending
-			if (incomingData.find(STOP_RECEIVING_CONDITION)
-					!= std::string::npos)
-				keepReceiving = false;
-		}
-	}
-	incomingData.erase(
-			incomingData.length() - sizeof(STOP_RECEIVING_CONDITION) + 1,
-			incomingData.length());
-
+	delete threadSafeMap;
+	//TODO: Delete thread safe map but no socket
 }
 
 void Server::begin() {
 	beginAccepting();
 
-	std::cout<<"Server begin"<<std::endl;
+	threadSafeMap->description();
 }
 
+//Will accept all connections to the server and
+//will reduce theme (reduce implies that elements)
+//will be added to the threadSaveHash
 void Server::beginAccepting() {
 	std::string input;
 
-	AcceptThread acceptThread = AcceptThread(this->socket);
+	AcceptThread acceptThread(socket, threadSafeMap);
 
 	acceptThread.start();
 
 	while (std::getline(std::cin, input)) {
 		if (input == STOP_LISTENING_KEY) {
-			std::cout<<"Listening"<<std::endl;
 			acceptThread.endAccepting();
 			break;
 		}
@@ -76,4 +54,3 @@ void Server::beginAccepting() {
 
 	acceptThread.join();
 }
-

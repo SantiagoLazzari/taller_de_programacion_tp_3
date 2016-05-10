@@ -34,7 +34,7 @@ void MapInputParser::parse(Map *map) {
 	input.str(inputString);
 
 	input >> city;
-	input>> temperature;
+	input >> temperature;
 	input >> day;
 
 	map->setKeyWithValue(atoi(day.c_str()), std::pair<std::string, int>(city, atoi(temperature.c_str())));
