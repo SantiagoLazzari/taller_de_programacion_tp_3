@@ -12,6 +12,7 @@
 #include "common_Map.h"
 #include <map>
 #include <vector>
+#include <string>
 
 class ThreadSafeHashMap {
 public:
@@ -27,6 +28,9 @@ private:
 	//This map is a Max map, this means that will only save
 	//the max value (in this case temperature of a Map object)
 	std::map<int, std::vector<Map *> > threadSafeMap;
+
+	//Get cities from a list of maps
+	void vectorOfCitiesWithVectorOfMapsAtKey(int key, std::vector<std::string> *aVector);
 
 	//Map Thread garbaje
 	std::vector<Map *> maps;

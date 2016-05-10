@@ -12,6 +12,7 @@
 #include "common_Lock.h"
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 ThreadSafeHashMap::ThreadSafeHashMap() {
 }
@@ -55,6 +56,8 @@ void ThreadSafeHashMap::setMap(Map *aMap) {
 	}
 }
 
+
+
 void ThreadSafeHashMap::description() {
 	for (std::map<int, std::vector<Map *> >::iterator it=threadSafeMap.begin(); it!=threadSafeMap.end(); ++it) {
 		std::stringstream stream;
@@ -72,12 +75,16 @@ void ThreadSafeHashMap::description() {
 		//If there is more than one city with the same
 		//temperature
 		if (mapsFromCurrentKey.size() > 0) {
-			stream<<currentMap->getValue().first;
+			std::vector<std::string> orderedCities;
+			vectorOfCitiesWithVectorOfMapsAtKey(currentMap->getKey(), &orderedCities);
 
+			std::string firstCity = (*orderedCities.begin());
 
-			for (std::vector<Map *>::iterator it = (++mapsFromCurrentKey .begin()) ; it != mapsFromCurrentKey .end(); ++it) {
-				Map *otherMap = *it;
-				stream<<"/"<<otherMap->getValue().first;
+			stream<<firstCity;
+
+			for (std::vector<std::string>::iterator it = (++orderedCities.begin()) ; it != orderedCities.end(); ++it) {
+				std::string currentCity = *it;
+				stream<<"/"<<currentCity;
 			}
 			stream<<" ";
 		} else {
@@ -89,4 +96,14 @@ void ThreadSafeHashMap::description() {
 
 		std::cout<<stream.str();
 	}
+}
+
+void ThreadSafeHashMap::vectorOfCitiesWithVectorOfMapsAtKey(int key, std::vector<std::string> *aVector) {
+	std::vector<Map *> mapsFromCurrentKey = threadSafeMap[key];
+
+	for (std::vector<Map *>::iterator it = mapsFromCurrentKey.begin() ; it != mapsFromCurrentKey.end() ; ++it) {
+		aVector->push_back((*it)->getValue().first);
+	}
+
+	sort(aVector->begin(), aVector->end());
 }

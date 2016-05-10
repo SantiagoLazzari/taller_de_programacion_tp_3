@@ -30,11 +30,10 @@ void Client::begin() {
 	std::string input;
 
 	while (std::getline(std::cin, input)) {
-		if (input.compare("") == 0) {
-			std::cout<"debo salir de aca"<<std::endl;
-		}
-
-		std::cout<<input<<std::endl;
+		//If there is an empty line program must
+		//jump to next line
+		if (input.compare("") == 0)
+			continue;
 
 		Map *map = new Map();
 		MapInputParser parser(input);
